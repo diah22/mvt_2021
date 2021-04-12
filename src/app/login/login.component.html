@@ -1,0 +1,38 @@
+<div class="navbar-top">
+    
+</div>
+<!-- Material form login -->
+<div class="content">
+  <mdb-card style="width: 50%;">
+
+    <mdb-card-header class="info-color white-text text-center py-4">
+      <h5>
+        <strong>Se connecter</strong>
+      </h5>
+    </mdb-card-header>
+  
+  
+    <mdb-card-body class="px-lg-5 pt-0">
+  
+    
+      <form class="text-center" style="color: #757575;">
+        <div class="md-form">
+          <input [(ngModel)]="admin.email" type="email" id="materialLoginFormEmail" class="form-control" [ngModelOptions]="{standalone: true}" mdbInput>
+          <label for="materialLoginFormEmail">E-mail</label>
+        </div>
+  
+        <div class="md-form">
+          <input [(ngModel)]="admin.password" type="password" id="materialLoginFormPassword" [ngModelOptions]="{standalone: true}" class="form-control" mdbInput>
+          <label for="materialLoginFormPassword">Password</label>
+        </div>
+
+        <button (click)="signin()" mdbBtn color="info" class="my-4 waves-effect z-depth-0" mdbWavesEffect
+          type="submit">Se connecter</button>
+
+          <button type="button" mdbBtn color="grey" class="z-depth-1a">Send</button>
+  
+      </form>
+  
+    </mdb-card-body> 
+  </mdb-card>
+</div>

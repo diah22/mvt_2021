@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+.navbar-top{
+    width: 100%;
+    height: 70px;
+    box-shadow: 1rem 0 1rem 0 rgba($color: #000000, $alpha: 1.0);
+    background-color: #000000;
+}
+
+.content{
+    margin-top: 90px;
+    margin-left: 5%;
+}

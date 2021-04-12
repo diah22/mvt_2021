@@ -1,0 +1,29 @@
+<div class="navbar-top">
+</div>
+
+<div class="left-sidebar">
+    <ul>
+        <li routerLinkActive="active"> <a routerLink="../home">Accueil</a></li>
+        <li routerLinkActive="active"> <a routerLink="../listEmployee">Gerer employee</a></li>
+        <li routerLinkActive="active"> <a routerLink="../absence">Liste d'absence</a></li>
+        <li routerLinkActive="active"> <a routerLink= "../session">Session</a></li>
+    </ul>
+</div>
+<button (click)="addEmployee()" mdbBtn color="info" class="my-4" type="submit">Ajouter nouveau employee</button>
+
+<form class="text-center border border-light p-5 add-employee">
+
+    <p class="h4 mb-4">Ajout nouveau employee</p>
+  
+    <!-- Name -->
+    
+    <input [(ngModel)]="employee.matricules" [ngModelOptions]="{standalone: true}" type="text" id="matricule" class="form-control mb-4" placeholder="Matricule">
+    <input [(ngModel)]="employee.nom" [ngModelOptions]="{standalone: true}" type="text" id="name" class="form-control mb-4" placeholder="Nom">
+    <input [(ngModel)]="employee.prenom" [ngModelOptions]="{standalone: true}" type="text" id="surname" class="form-control mb-4" placeholder="Prenom">
+    <input [(ngModel)]="employee.email" [ngModelOptions]="{standalone: true}" type="email" id="email" class="form-control mb-4" placeholder="Email">
+    <button mdbBtn (click)="saveImage()" color="warning">Enregistrer la photo</button>
+
+    <button mdbBtn color="info" type="submit">Ajouter</button>
+  
+  </form>
+  <!-- Default form contact -->

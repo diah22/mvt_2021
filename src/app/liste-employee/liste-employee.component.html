@@ -1,0 +1,35 @@
+<div class="navbar-top">
+</div>
+
+<div class="left-sidebar">
+    <ul>
+        <li routerLinkActive="active"> <a routerLink="../home">Accueil</a></li>
+        <li routerLinkActive="active"> <a routerLink="../listEmployee">Gerer employee</a></li>
+        <li routerLinkActive="active"> <a routerLink="../absence">Liste d'absence</a></li>
+        <li routerLinkActive="active"> <a routerLink= "../session">Session</a></li>
+    </ul>
+</div>
+<button (click)="addEmployee()" mdbBtn color="info" class="my-4" type="submit">Ajouter nouveau employee</button>
+
+
+<table mdbTable class="list-employee">
+    <thead class="grey lighten-1 black-text">
+        <tr>
+            <th *ngFor="let emp of emp_headers" scope="col">{{emp}}</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        <tr mdbTableCol *ngFor="let row of allEmployee">
+            <th scope="row">{{row.matricules}}</th>
+            <td>{{row.nom}}</td>
+            <td>{{row.prenom}}</td>
+            <td>{{row.email}}</td>
+            <td class="action">
+                <a><img src="../../assets/icon/edit-1.png"></a>
+                <a><img src="../../assets/icon/garbage-2.png"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<!-- Default form contact -->
