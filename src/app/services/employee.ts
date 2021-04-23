@@ -31,6 +31,10 @@ export class EmployeeService {
   getAllEmp(){
     return this.http.get(this.userUrl+'/getAllEmployee', httpOptions);
   }
+
+  getOneEmp(matr: string |null):Observable<any>{
+    return this.http.get<Employee>(this.userUrl+`/getOneEmployee/${matr}`);
+  }
   
   
 }

@@ -26,8 +26,8 @@
             <td>{{row.prenom}}</td>
             <td>{{row.email}}</td>
             <td class="action">
-                <a><img src="../../assets/icon/edit-1.png"></a>
-                <a><img src="../../assets/icon/garbage-2.png"></a>
+                <a routerLink="/detailEmployee/{{row.matricules}}"><img src="../../assets/icon/edit-1.png"></a>
+                <a (click)="remove()"><img src="../../assets/icon/garbage-2.png"></a>
             </td>
         </tr>
     </tbody>

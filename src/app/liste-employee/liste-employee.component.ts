@@ -27,6 +27,10 @@ export class ListeEmployeeComponent implements OnInit {
     this.routes.navigate(['addEmployee']);
   }
 
+  remove():void{
+    
+  }
+
   
 
 }
