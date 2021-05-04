@@ -35,6 +35,10 @@ export class EmployeeService {
   getOneEmp(matr: string |null):Observable<any>{
     return this.http.get<Employee>(this.userUrl+`/getOneEmployee/${matr}`);
   }
+
+  updateEmp(employee: Employee[]) {
+    return this.http.post(this.userUrl+'/update', employee, httpOptions);
+  }
   
   
 }

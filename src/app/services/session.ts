@@ -18,7 +18,7 @@ export class SessionService {
   
   launchWebcam() {
 	//console.log(user);
-    return this.http.get(this.userUrl + '/webcam', httpOptions);
+    return this.http.get(this.userUrl + '/recognition', httpOptions);
   }
   
   

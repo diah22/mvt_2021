@@ -9,4 +9,15 @@
         <li routerLinkActive="active"> <a routerLink= "../session">Session</a></li>
     </ul>
 </div>
-
+<div class="content">
+    <h3>Derniers arrivés</h3>
+    <div class="row">
+        <div class="text-center border border-light card" *ngFor="let pre of presence">
+            <img>
+            <p><span> Nom: </span> {{pre.id}}</p>
+            <p>Heure: </p>
+        </div>
+    
+    </div>
+</div>
+<button  mdbBtn color="default" class="my-4" type="submit">Voir plus</button>

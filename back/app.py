@@ -19,6 +19,7 @@ db= client.mvt2
 admin= db.admin
 employee= db.employee
 image= db.image
+presence= db.presence
 
 faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 font= cv2.FONT_HERSHEY_SIMPLEX
@@ -44,10 +45,37 @@ def signin():
 
         return jsonify({'msg': 'success'})
 
+@app.route('/update', methods=['POST'])
+def update():
+    emp_json_list= request.get_json()
+    if not emp_json_list:
+        return jsonify({'response': 'error'})
+    
+    else:
+        emp_json= emp_json_list[0]
+        email= emp_json.get('email')
+        matr= emp_json.get('matricules')
+        nom= emp_json.get('nom')
+        prenom= emp_json.get('prenom')
+
+        try:
+            employee.update(
+                {"matricules": matr},
+                {"matricules":matr, "email": email, "nom": nom, "prenom": prenom}
+                )
+        except:
+            print('An exception occured')
+        
+        # print(emp_json[0]['matricules'])
+        # response= emp_json[0]
+        # email= response.get('matricules')
+        return jsonify({'response': 'success'})
+
 @app.route('/delete', methods=['GET'])
 def delete():
-    image.drop()
-    employee.drop()
+    # image.drop()
+    # employee.drop()
+    presence.drop()
     return jsonify({'response': 'true'})
 
 
@@ -56,8 +84,7 @@ def getEmployee(matricules):
     empl= []
     print(matricules)
     for emp in employee.find({"matricules": matricules}):
-        empl.append({"nom": emp['nom'],"prenom":emp["prenom"], "email": emp['email'], "matricules": emp['matricules'], "image": emp['image']})
-     
+        empl.append({"nom": emp['nom'],"prenom":emp["prenom"], "email": emp['email'], "matricules": emp['matricules']})
     return jsonify([empl])
 
 @app.route('/getAllEmployee', methods=['GET'])
@@ -66,7 +93,6 @@ def getAllEmployee():
     if employee.find({}):
         for empl in employee.find({}).sort('matricules'):
             allEmployee.append({"matricules": empl['matricules'], "nom": empl['nom'], "prenom": empl['prenom'], "email": empl['email']})
-    
     return jsonify([allEmployee])
 
 @app.route('/addOneImage', methods=['GET'])
@@ -96,7 +122,7 @@ def launchWebcam():
 
     count = 1
     print(count)
-    id = count
+    #id = count
     cam = cv2.VideoCapture(0)
     cam.set(3, 1000)  # set video widht
     cam.set(4, 900)  # set video height
@@ -105,6 +131,10 @@ def launchWebcam():
     minW = 0.1 * cam.get(3)
     minH = 0.1 * cam.get(4)
     nbImg = 0
+    nbEmployee= employee.find({}).count()
+    nbEmployee+=1
+    employee.insert({"matricules": matricules, "nom": nom.lower(), "prenom": prenom, "email": email, "id":nbEmployee})
+
     while True:
         ret, img = cam.read()
         # img = cv2.flip(img, -1) # Flip vertically
@@ -169,23 +199,10 @@ def launchWebcam():
     print("\n [INFO] Exiting Program and cleanup stuff")
     cam.release()
     cv2.destroyAllWindows()
-    nbEmployee= employee.find({}).count()
-    nbEmployee+=1
-    employee.insert({"matricules": matricules, "nom": nom.lower(), "prenom": prenom, "email": email, "id":nbEmployee})
-
+    updateTrainFace()
+   
     return jsonify({'answers': 'ok'})
 
-@app.route('/countEmployee', methods=['GET'])
-def countEmployee():
-    nbEmployee= employee.find({}).count()
-    
-    if nbEmployee == 0:
-        json_response= jsonify({'employee': 'zero'})
-    else:
-        json_response= jsonify({'employee': 'no zero'})
-    return json_response
-
-@app.route('/trainFace', methods=['GET'])
 def updateTrainFace():
     faces, ids= getImage()
     recognizer= cv2.face.LBPHFaceRecognizer_create()
@@ -227,11 +244,29 @@ def getImage():
     
     return facesamples, ids
 
+@app.route('/countEmployee', methods=['GET'])
+def countEmployee():
+    nbEmployee= employee.find({}).count()
     
-    # return facessamples, matricules
+    if nbEmployee == 0:
+        json_response= jsonify({'employee': 'zero'})
+    else:
+        json_response= jsonify({'employee': 'no zero'})
+    return json_response
+
+@app.route('/findAllPresence', methods=['GET'])
+def findAll():
+    all_presence=[]
+    if(presence.find({})):
+        for pre in presence.find({}):
+            all_presence.append({'id':pre['id'], 'id_emp': pre['id_emp']})
+    return jsonify([all_presence])
+
 
 @app.route('/recognition', methods=['GET'])
 def recognition():
+    presence_emp=[]
+    idEmp= 0
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     recognizer.read('trainer/trainer.yml')
     # iniciate id counter
@@ -279,6 +314,18 @@ def recognition():
 
             cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
             cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
+            idEmp=id
+
+        if(presence.find_one({'id_emp': idEmp})):
+            print('I\'m here so you got error')
+            # for pre in presence.find({'id': 2}):
+            #     print(pre['id_emp'])
+        
+        else:
+            try:
+                presence.insert({'id': 2, 'id_emp': idEmp})
+            except e:
+                print(e)
 
         cv2.imshow('camera', img)
 
