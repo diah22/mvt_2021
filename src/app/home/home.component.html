@@ -10,14 +10,21 @@
     </ul>
 </div>
 <div class="content">
-    <h3>Derniers arrivés</h3>
-    <div class="row">
-        <div class="text-center border border-light card" *ngFor="let pre of presence">
-            <img>
-            <p><span> Nom: </span> {{pre.id}}</p>
-            <p>Heure: </p>
+    <div *ngIf="is_show_only">
+        <h3>Derniers arrivés</h3>
+        <div class="row">
+            <div class="text-center border border-light card" *ngFor="let pre of presence">
+                <img>
+                <p><span> Nom: </span> {{pre.nom}}</p>
+                <p><span> Nom: </span> {{pre.prenom}}</p>
+                <p><span> Nom: </span> {{pre.matricules}}</p>
+                <p>Heure: </p>
+            </div>
         </div>
-    
+    </div>
+    <div *ngIf="is_permitted_all">
+        Hello, this will show you after clicking on the button
     </div>
 </div>
-<button  mdbBtn color="default" class="my-4" type="submit">Voir plus</button>
+
+<button  mdbBtn (click)="tooglePresence()" color="default" class="my-4" type="submit"> {{ buttonName }}</button>

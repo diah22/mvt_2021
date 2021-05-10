@@ -10,7 +10,10 @@ import {Router} from '@angular/router';
   styleUrls: ['./home.component.scss', '../login/login.component.scss', '../liste-employee/liste-employee.component.scss']
 })
 export class HomeComponent implements OnInit {
-  presence: Presence[]= [];
+  is_permitted_all:boolean= false;
+  is_show_only: boolean= true;
+  buttonName= 'Voir plus';
+  presence: Employee[]= [];
   constructor(private presenceService: PresenceService) { }
 
   ngOnInit(): void {
@@ -20,4 +23,18 @@ export class HomeComponent implements OnInit {
     })
   }
 
+  tooglePresence(): void {
+    this.is_permitted_all= !this.is_permitted_all;
+
+    if(this.is_permitted_all)
+    {
+      this.is_show_only = false;
+      this.buttonName= 'Retour';
+    }
+    else
+    {
+      this.is_show_only= true;
+      this.buttonName = 'Voir plus';
+    }
+  }
 }

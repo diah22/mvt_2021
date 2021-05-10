@@ -75,6 +75,8 @@ def update():
 def delete():
     # image.drop()
     # employee.drop()
+    image.drop()
+    employee.drop()
     presence.drop()
     return jsonify({'response': 'true'})
 
@@ -114,27 +116,26 @@ def addOneImage():
 @app.route('/webcam', methods=['POST'])
 def launchWebcam():
     employee_json= request.get_json()
-
     nom= employee_json.get('nom')
     prenom= employee_json.get('prenom')
     email= employee_json.get('email')
     matricules= employee_json.get('matricules')
-
     count = 1
-    print(count)
-    #id = count
+
     cam = cv2.VideoCapture(0)
-    cam.set(3, 1000)  # set video widht
-    cam.set(4, 900)  # set video height
+    cam.set(3, 640)  # set video widht
+    cam.set(4, 480)  # set video height
 
     # Define min window size to be recognized as a face
     minW = 0.1 * cam.get(3)
     minH = 0.1 * cam.get(4)
+
     nbImg = 0
     nbEmployee= employee.find({}).count()
     nbEmployee+=1
-    employee.insert({"matricules": matricules, "nom": nom.lower(), "prenom": prenom, "email": email, "id":nbEmployee})
+    employee.insert({"matricules": matricules, "nom": nom.lower(), "prenom": prenom, "email": email, "id":nbEmployee, "image": ""})
 
+    # getName= pd.read_csv('UserDetails/userdetails.csv')
     while True:
         ret, img = cam.read()
         # img = cv2.flip(img, -1) # Flip vertically
@@ -147,8 +148,8 @@ def launchWebcam():
             minNeighbors=5,
             minSize=(int(minW), int(minH)),
         )
+
         for (x, y, w, h) in faces:
-            # cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
             nbImg += 1
             cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
             cv2.imwrite("img.jpg", img[y:y+ h, x:x+w])
@@ -167,20 +168,15 @@ def launchWebcam():
             except e:
                 print('An exception occured')
                 print(e)
+            
+        cv2.imshow('camera', img)
 
-           
-            # name="Karin"
-            # cv2.imwrite("images/" + name + "." + str(nbImg) + ".jpg",
-            #             gray[y:y + h, x:x + w])
-
-    
-            # cv2.imshow('image', img)
-        k = cv2.waitKey(100) & 0xff  # Press 'ESC' for exiting video
+        k = cv2.waitKey(10) & 0xff  # Press 'ESC' for exiting video
         if k == 27:
             break
         elif nbImg >= 30:  # Take 30 face sample and stop video
             break
-
+        
         faces_imgsave = faceCascade.detectMultiScale(
         img,
         scaleFactor=1.2,
@@ -190,17 +186,32 @@ def launchWebcam():
 
         for (x, y, w, h) in faces_imgsave:
 
-            name="Karin_imgsave"
+            name="img_new"
             cv2.imwrite("images/" + name + ".jpg",
                          img[y:y + h, x:x + w])
+            
+            filename= "images/img_new.jpg"
+            try:
+                with open(filename, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read())
+               
+
+                employee.update(
+                        {"matricules": matricules},
+                        {"matricules": matricules, "nom": nom.lower(), "prenom": prenom, "email": email, "id":nbEmployee, "image":encoded_string }
+                    )
+                # print(matricules)
+            except e:
+                print('An exception occured')
+                print(e)
+
  
-            cv2.imshow('image', img)
-           
+
+
+    # Do a bit of cleanup
     print("\n [INFO] Exiting Program and cleanup stuff")
     cam.release()
     cv2.destroyAllWindows()
-    updateTrainFace()
-   
     return jsonify({'answers': 'ok'})
 
 def updateTrainFace():
@@ -258,11 +269,14 @@ def countEmployee():
 def findAll():
     all_presence=[]
     if(presence.find({})):
-        for pre in presence.find({}):
-            all_presence.append({'id':pre['id'], 'id_emp': pre['id_emp']})
+        for pre in presence.find().limit(3):
+            ids= pre['id_emp']
+            print(ids)
+            if employee.find({'id': ids}):
+                for emp in employee.find({'id': ids}):
+                    all_presence.append({'matricules': emp['matricules'], 'nom': emp['nom'], 'prenom': emp['prenom'], 'email': emp['email']})
     return jsonify([all_presence])
-
-
+    
 @app.route('/recognition', methods=['GET'])
 def recognition():
     presence_emp=[]
